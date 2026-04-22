@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from typing import Dict, Any
 
 from app.db.database import get_db
-from app.schemas.project import ProjectCreate, ProjectComponentAdd
+from app.schemas.project import ProjectCreate, ProjectComponentAdd, ProjectValidationResponse
 
 router = APIRouter()
 
@@ -75,3 +75,20 @@ async def add_component_to_project(
     except Exception as e:
         await db.rollback()
         raise HTTPException(status_code=500, detail=f"Error al agregar el componente: {str(e)}")
+
+@router.get("/{project_id}/validation", response_model=ProjectValidationResponse)
+async def get_project_validation(project_id: str, db: AsyncSession = Depends(get_db)):
+    """
+    Consulta la vista de validación para un proyecto y devuelve el estado de compatibilidad.
+    """
+    query = text("SELECT * FROM vw_project_validation WHERE project_id = :pid")
+    result = await db.execute(query, {"pid": project_id})
+    row = result.mappings().first()
+    
+    if not row:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"No se encontró validación para el proyecto {project_id}. Verifica que exista y tenga componentes."
+        )
+        
+    return row
