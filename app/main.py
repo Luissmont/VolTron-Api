@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
-from app.api.endpoints import components, projects
+from app.api.endpoints import components, projects, auth
 
 app = FastAPI(
     title="VolTron API",
@@ -22,6 +22,7 @@ app.add_middleware(
 
 app.include_router(components.router, prefix="/api/components", tags=["Catálogo"])
 app.include_router(projects.router, prefix="/api/projects", tags=["Proyectos"])
+app.include_router(auth.router, prefix="/api/auth", tags=["Autenticación"])
 
 @app.get("/")
 async def root():

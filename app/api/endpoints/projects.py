@@ -6,24 +6,27 @@ from typing import Dict, Any
 
 from app.db.database import get_db
 from app.schemas.project import ProjectCreate, ProjectComponentAdd, ProjectValidationResponse
+from app.api.dependencies import get_current_user, get_optional_user
 
 router = APIRouter()
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_project(project: ProjectCreate, db: AsyncSession = Depends(get_db)):
+async def create_project(project: ProjectCreate, db: AsyncSession = Depends(get_db), current_user: dict | None = Depends(get_optional_user)):
     """
-    Crea un nuevo proyecto vacío en la base de datos.
+    Crea un nuevo proyecto vacío en la base de datos asociado al usuario (si está autenticado) o anónimo.
     """
+    user_id = current_user["user_id"] if current_user else None
     try:
         query = text("""
-            INSERT INTO projects (name, description)
-            VALUES (:name, :description)
+            INSERT INTO projects (name, description, user_id)
+            VALUES (:name, :description, :user_id)
             RETURNING id
         """)
         
         result = await db.execute(query, {
             "name": project.name,
-            "description": project.description
+            "description": project.description,
+            "user_id": user_id
         })
         await db.commit()
         
