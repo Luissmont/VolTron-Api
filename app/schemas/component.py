@@ -11,6 +11,8 @@ class ComponentResponse(BaseModel):
     voltage_max: Decimal
     current_draw_ma: int
     max_supply_ma: int
-    image_url: Optional[str] = None 
+    price_usd: float
+    price_mxn: Optional[float] = None
+    image_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
