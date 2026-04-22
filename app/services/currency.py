@@ -8,7 +8,7 @@ async def get_mxn_rate() -> float:
     Obtiene el tipo de cambio actual de USD a MXN desde Frankfurter API.
     Retorna un valor estático de fallback (18.50) en caso de caída del servicio o falta de internet.
     """
-    url = "https://api.frankfurter.app/latest?from=USD&to=MXN"
+    url = "https://api.frankfurter.dev/v1/latest?from=USD&to=MXN"
     try:
         async with httpx.AsyncClient(timeout=3.0) as client:
             response = await client.get(url)

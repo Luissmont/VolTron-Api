@@ -94,4 +94,6 @@ async def get_project_validation(project_id: str, db: AsyncSession = Depends(get
             detail=f"No se encontró validación para el proyecto {project_id}. Verifica que exista y tenga componentes."
         )
         
-    return row
+    validation_dict = dict(row)
+    validation_dict["project_id"] = str(validation_dict["project_id"])
+    return validation_dict

@@ -1,13 +1,14 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
+from uuid import UUID
 
 class UserCreate(BaseModel):
     email: str
     password: str
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
     email: str
     created_at: datetime
     
